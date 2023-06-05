@@ -3,7 +3,7 @@
 <head>
   <title>Strafen-Dropdown</title>
   <style>
-    body {
+body {
       background-color: #333;
       color: #fff;
       font-family: Arial, sans-serif;
@@ -111,6 +111,7 @@
   <div id="result"></div>
   <div id="selected-list"></div>
 
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
     $(document).ready(function() {
@@ -118,53 +119,37 @@
       var totalgeldstrafe = 0;
       var totalHafteinheiten = 0;
       var sonstige = [];
-	  
-	  let selectedParagraphs_unique = [];
-	  let sonstige_unique = [];
-	  
 
-      $('#calculate-btn').click(function() 
-	  {
+      $('#calculate-btn').click(function() {
         var selectedOptions = $('#strafen').val();
 
         for (var i = 0; i < selectedOptions.length; i++) {
-          
-		  var option = selectedOptions[i];
+          var option = selectedOptions[i];
           var values = option.split("|");
-		  
-		  var sonstiger_teil = values[3]
+          var sonstiger_teil = values[3]
           var paragraph = values[0]
           var kosten = values[1]
-		  var hafteinheit = values[2]
-		  
-		  
-		  
-		  // Add hafteinheit
-		  if (paragraph.replace(/\s/g, '').length) {
-			  console.log("Para")
-			selectedParagraphs.push(paragraph)
-		  
-		  // Add hafteinheit
-		  if (hafteinheit.replace(/\s/g, '').length) {
-			    console.log("haft")
-			totalHafteinheiten += parseInt(hafteinheit.replace('Hafteinheiten',''))
-		  }
-		    // Add kosten
-		  if (kosten.replace(/\s/g, '').length) {
-			    console.log("geld")
-			totalgeldstrafe += parseInt(kosten.replace('$',''))
-			 console.log(totalgeldstrafe)
-		  
-		  }
-		   // Add hafteinheit
-		  if (sonstiger_teil.replace(/\s/g, '').length) {
-			  console.log("sonstige")
-			sonstige.push(sonstiger_teil)
-		}
-		}
-		
-		selectedParagraphs_unique =  [...new Set(selectedParagraphs)]
-		sonstige_unique =  [...new Set(sonstige)]
+          var hafteinheit = values[2]
+
+          if (paragraph.replace(/\s/g, '').length) {
+            selectedParagraphs.push(paragraph);
+          }
+
+          if (hafteinheit.replace(/\s/g, '').length) {
+            totalHafteinheiten += parseInt(hafteinheit.replace('Hafteinheiten',''));
+          }
+
+          if (kosten.replace(/\s/g, '').length) {
+            totalgeldstrafe += parseInt(kosten.replace('$',''));
+          }
+
+          if (sonstiger_teil.replace(/\s/g, '').length) {
+            sonstige.push(sonstiger_teil);
+          }
+        }
+
+        var selectedParagraphs_unique = [...new Set(selectedParagraphs)];
+        var sonstige_unique = [...new Set(sonstige)];
 
         var output = "<h3>Ausgewählte Paragraphen:</h3><ul>";
 
@@ -175,6 +160,9 @@
         output += "</ul><br>Gesamtstrafe: $" + totalgeldstrafe;
 
         if (totalHafteinheiten > 0) {
+          if (totalHafteinheiten > 15) {
+            totalHafteinheiten = 15; // Begrenzung auf maximal 15 Hafteinheiten
+          }
           output += "<br>Gesamthaftstrafe: " + totalHafteinheiten + " Hafteinheiten";
         }
 
@@ -183,9 +171,8 @@
         }
 
         $('#result').html(output);
-      }});
+      });
 
-	  
       $('#clear-btn').click(function() {
         $('#strafen').val([]);
         selectedParagraphs = [];
